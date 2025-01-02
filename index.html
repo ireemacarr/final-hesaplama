@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Not Hesaplama</title>
+    <style>
+        :root {
+            --primary-color: #2c3e50;
+            --secondary-color: #3498db;
+            --background-color: #ecf0f1;
+            --success-color: #27ae60;
+            --error-color: #e74c3c;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            background-color: var(--background-color);
+            color: var(--primary-color);
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 2rem auto;
+            padding: 2rem;
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0,0,0,0.1);
+        }
+
+        h1 {
+            text-align: center;
+            color: var(--primary-color);
+            margin-bottom: 2rem;
+            font-size: 2.5rem;
+            border-bottom: 3px solid var(--secondary-color);
+            padding-bottom: 1rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: bold;
+            color: var(--primary-color);
+        }
+
+        input {
+            width: 100%;
+            padding: 0.8rem;
+            border: 2px solid #ddd;
+            border-radius: 5px;
+            font-size: 1rem;
+            transition: border-color 0.3s ease;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: var(--secondary-color);
+        }
+
+        button {
+            display: block;
+            width: 100%;
+            padding: 1rem;
+            background-color: var(--secondary-color);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #2980b9;
+        }
+
+        .result {
+            margin-top: 2rem;
+            padding: 1.5rem;
+            background-color: #f8f9fa;
+            border-radius: 5px;
+            border-left: 5px solid var(--secondary-color);
+            display: none;
+        }
+
+        .harf-notu {
+            font-weight: bold;
+            color: var(--secondary-color);
+            font-size: 1.1em;
+        }
+
+        table {
+            width: 100%;
+            margin-top: 2rem;
+            border-collapse: collapse;
+            background-color: white;
+            box-shadow: 0 0 10px rgba(0,0,0,0.05);
+        }
+
+        th, td {
+            padding: 1rem;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        th {
+            background-color: var(--secondary-color);
+            color: white;
+            font-weight: bold;
+        }
+
+        tr:hover {
+            background-color: #f5f5f5;
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                margin: 1rem;
+                padding: 1rem;
+            }
+
+            h1 {
+                font-size: 1.8rem;
+            }
+
+            th, td {
+                padding: 0.5rem;
+            }
+        }
+
+        /* Animasyonlar */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .result.show {
+            display: block;
+            animation: fadeIn 0.5s ease;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Not Hesaplama</h1>
+        
+        <div class="form-group">
+            <label for="vize">Vize Notu:</label>
+            <input type="number" id="vize" min="0" max="100" placeholder="Vize notunuzu girin">
+        </div>
+
+        <div class="form-group">
+            <label for="hedef">Hedef Geçme Notu:</label>
+            <input type="number" id="hedef" min="0" max="100" placeholder="Hedef notunuzu girin">
+        </div>
+
+        <div class="form-group">
+            <label for="vizeYuzde">Vize Yüzdesi:</label>
+            <input type="number" id="vizeYuzde" min="0" max="100" value="40" placeholder="Vize yüzdesini girin">
+        </div>
+
+        <button onclick="hesapla()">Hesapla</button>
+
+        <div id="sonuc" class="result"></div>
+
+        <table>
+            <tr>
+                <th>Harf Notu</th>
+                <th>Puan Aralığı</th>
+            </tr>
+            <tr>
+                <td>AA</td>
+                <td>90-100</td>
+            </tr>
+            <tr>
+                <td>BA</td>
+                <td>85-89</td>
+            </tr>
+            <tr>
+                <td>BB</td>
+                <td>80-84</td>
+            </tr>
+            <tr>
+                <td>CB</td>
+                <td>75-79</td>
+            </tr>
+            <tr>
+                <td>CC</td>
+                <td>70-74</td>
+            </tr>
+            <tr>
+                <td>DC</td>
+                <td>65-69</td>
+            </tr>
+            <tr>
+                <td>DD</td>
+                <td>60-64</td>
+            </tr>
+            <tr>
+                <td>FD</td>
+                <td>50-59</td>
+            </tr>
+            <tr>
+                <td>FF</td>
+                <td>0-49</td>
+            </tr>
+        </table>
+    </div>
+
+    <script>
+        function getHarfNotu(puan) {
+            if (puan >= 90) return 'AA';
+            if (puan >= 85) return 'BA';
+            if (puan >= 80) return 'BB';
+            if (puan >= 75) return 'CB';
+            if (puan >= 70) return 'CC';
+            if (puan >= 65) return 'DC';
+            if (puan >= 60) return 'DD';
+            if (puan >= 50) return 'FD';
+            return 'FF';
+        }
+
+        function hesapla() {
+            const vize = parseFloat(document.getElementById('vize').value);
+            const hedef = parseFloat(document.getElementById('hedef').value);
+            const vizeYuzde = parseFloat(document.getElementById('vizeYuzde').value);
+            const finalYuzde = 100 - vizeYuzde;
+
+            if (isNaN(vize) || isNaN(hedef) || isNaN(vizeYuzde)) {
+                alert('Lütfen tüm alanları doldurun!');
+                return;
+            }
+
+            const gerekliNot = ((hedef - (vize * vizeYuzde / 100)) * 100) / finalYuzde;
+            const sonucDiv = document.getElementById('sonuc');
+            
+            sonucDiv.style.display = 'block';
+            sonucDiv.classList.add('show');
+            
+            if (gerekliNot > 100) {
+                const maxNot = (vize * vizeYuzde / 100) + (100 * finalYuzde / 100);
+                sonucDiv.innerHTML = `
+                    <p>Maalesef hedeflediğiniz notu almanız mümkün değil.</p>
+                    <p>En yüksek final notu (100) ile dersten ${maxNot.toFixed(2)} 
+                    alabilirsiniz. (Harf notu: <span class="harf-notu">${getHarfNotu(maxNot)}</span>)</p>`;
+            } else if (gerekliNot < 0) {
+                const garantiNot = (vize * vizeYuzde / 100);
+                sonucDiv.innerHTML = `
+                    <p>Tebrikler! Finalden 0 alsanız bile dersi ${garantiNot.toFixed(2)} 
+                    ile geçebilirsiniz!</p>
+                    <p>Harf notu: <span class="harf-notu">${getHarfNotu(garantiNot)}</span></p>`;
+            } else {
+                sonucDiv.innerHTML = `
+                    <p>Hedeflediğiniz ${hedef} notunu almak için finalden en az 
+                    <span class="harf-notu">${gerekliNot.toFixed(2)}</span> almanız gerekiyor.</p>
+                    <p>Hedeflenen harf notu: <span class="harf-notu">${getHarfNotu(hedef)}</span></p>`;
+            }
+        }
+    </script>
+</body>
+</html>
